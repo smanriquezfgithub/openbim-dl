@@ -461,3 +461,113 @@ type_name ::=
 
 ---
 
+## 3.14 Operators and Precedence
+
+This section defines the **operators supported by OpenBIM-DL expressions**,
+their **precedence**, and **associativity**.
+
+Operators are intentionally limited and explicit to ensure:
+- deterministic evaluation,
+- ease of parsing,
+- reproducible semantics across runtimes.
+
+---
+
+### 3.14.1 Operator Categories
+
+OpenBIM-DL supports the following operator categories:
+
+1. Arithmetic operators
+2. Comparison operators
+3. Logical operators
+4. Access operators (indexing and qualification)
+
+All operators are **pure** and **side-effect free**.
+
+---
+
+### 3.14.2 Operator Precedence Table
+
+Operators are evaluated according to the following precedence rules,
+from **highest (10)** to **lowest (1)**.
+
+| Operator | Category | Precedence | Associativity | Example |
+|--------|----------|------------|---------------|---------|
+| `[]` | Indexing | 10 | Left | `geom.dims()[2]` |
+| `.` | Property / namespace access | 10 | Left | `ifc.type()` |
+| `not` | Logical (unary) | 9 | Right | `not has_geometry` |
+| `*` | Arithmetic | 8 | Left | `area * factor` |
+| `/` | Arithmetic | 8 | Left | `volume / height` |
+| `%` | Arithmetic | 8 | Left | `index % 2` |
+| `+` | Arithmetic | 7 | Left | `width + depth` |
+| `-` | Arithmetic | 7 | Left | `height - offset` |
+| `==` | Comparison | 6 | Left | `ifc.type() == "IfcWall"` |
+| `!=` | Comparison | 6 | Left | `material != "Concrete"` |
+| `<` | Comparison | 6 | Left | `height < 3.0` |
+| `>` | Comparison | 6 | Left | `area > 10.0` |
+| `<=` | Comparison | 6 | Left | `width <= 0.3` |
+| `>=` | Comparison | 6 | Left | `depth >= 5.0` |
+| `and` | Logical | 3 | Left | `has_geometry and not is_orphan` |
+| `or` | Logical | 2 | Left | `is_orphan or not bbox_valid` |
+
+---
+
+### 3.14.3 Operator Semantics
+
+#### Arithmetic Operators
+- Operate only on numeric (`Int`, `Float`) operands.
+- Mixed numeric types are promoted to `Float`.
+- If any operand is `Null`, the result is `Null`.
+
+#### Comparison Operators
+- Return a `Bool`.
+- Operands must be comparable.
+- If any operand is `Null`, the result is `Null`.
+
+#### Logical Operators
+- Operate on `Bool` values.
+- `not` is unary and right-associative.
+- If any operand is `Null`, the result is `Null`.
+
+#### Access Operators
+- `.` accesses namespaces, properties, or functions.
+- `[]` indexes lists and vectors.
+- Indexing out of bounds returns `Null`.
+
+---
+
+### 3.14.4 Parentheses
+
+Parentheses `(` `)` may be used to override default precedence.
+
+Example:
+(height > 3.0 and width > 0.3) or is_orphan
+
+
+---
+
+### 3.14.5 Null Propagation Rule
+
+All operators in OpenBIM-DL follow **explicit Null propagation**:
+
+- Any operation involving `Null` yields `Null`,
+- except where explicitly handled via functions such as `coalesce`.
+
+This rule ensures:
+- predictable behavior,
+- no hidden defaults,
+- explicit data quality signaling.
+
+---
+
+### 3.14.6 Notes on Determinism
+
+- Operator evaluation order is strictly defined by precedence.
+- Short-circuit evaluation is **not required** by the specification.
+- Runtimes may implement short-circuiting as an optimization,
+  but must preserve semantic equivalence.
+
+---
+
+
+
