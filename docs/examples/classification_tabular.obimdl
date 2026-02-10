@@ -1,1 +1,46 @@
-a
+# classification_tabular.obimdl
+# OpenBIM Data Language (OpenBIM-DL) — Example: Tabular classification of IfcWall
+
+source {
+  format = "IFC"
+}
+
+view Walls {
+  select node
+  where ifc.is_a("IfcWall")
+}
+
+derive {
+  # ---- Label (target) ----
+  # Using Pset_WallCommon.LoadBearing when available.
+  # If missing, default to false (non-loadbearing) explicitly via coalesce.
+  label_loadbearing = coalesce(
+    pset.get("Pset_WallCommon", "LoadBearing"),
+    false
+  )
+
+  # ---- Features ----
+  # Height (approx) from geometry dims: dims()[2] = Z dimension.
+  height = geom.dims()[2]
+
+  # Net area from quantities (heuristic)
+  net_area = qto.net_area()
+
+  # Material as text from Pset_WallCommon if present (tool-dependent).
+  # If absent, remains null.
+  material = pset.text("Pset_WallCommon", "Material")
+
+  # Storey as container guid (immediate spatial container)
+  storey = contained_in().guid()
+}
+
+synthesize {
+  # Simulate realistic missingness of the entire Pset_WallCommon
+  drop_pset("Pset_WallCommon", 0.15)
+}
+
+split by building
+
+export tabular {
+  format = "parquet"
+}
