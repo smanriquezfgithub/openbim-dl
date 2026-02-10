@@ -256,3 +256,208 @@ and reproducible transformations from IFC models
 to AI-ready datasets.
 
 ---
+
+## 3.13 Formal Grammar (EBNF)
+
+This section defines the **formal grammar** of OpenBIM Data Language (OpenBIM-DL)
+using **Extended Backus–Naur Form (EBNF)**.
+
+The grammar specifies the **syntactic structure only**.
+Semantic validation is defined in later chapters.
+
+---
+
+### 3.13.1 Lexical Elements
+
+letter        ::= "A"…"Z" | "a"…"z"
+digit         ::= "0"…"9"
+underscore    ::= "_"
+
+identifier    ::= ( letter | underscore ) { letter | digit | underscore }
+
+integer       ::= digit { digit }
+float         ::= digit { digit } "." digit { digit }
+number        ::= integer | float
+
+string        ::= "\"" { character } "\""
+character     ::= ? any Unicode character except " and newline ?
+
+boolean       ::= "true" | "false"
+null_literal  ::= "null"
+
+whitespace    ::= { " " | "\t" | "\n" | "\r" }
+
+comment       ::= "#" { character } newline
+
+---
+
+### 3.13.2 Literals
+
+literal ::= number
+          | string
+          | boolean
+          | null_literal
+
+---
+
+### 3.13.3 Document Structure
+
+document ::=
+    whitespace
+    source_block
+    view_block*
+    derive_block
+    synthesize_block?
+    split_block?
+    export_block+
+    whitespace
+
+---
+
+### 3.13.4 Source Block
+
+source_block ::=
+    "source" whitespace
+    "{" whitespace
+    source_param*
+    "}"
+
+source_param ::=
+    identifier whitespace "=" whitespace literal
+
+---
+
+### 3.13.5 View Block
+
+view_block ::=
+    "view" whitespace identifier whitespace
+    "{" whitespace
+    select_clause
+    where_clause?
+    "}"
+
+select_clause ::=
+    "select" whitespace ( "node" | "edge" )
+
+where_clause ::=
+    "where" whitespace expression
+
+---
+
+### 3.13.6 Derive Block
+
+derive_block ::=
+    "derive" whitespace
+    "{" whitespace
+    derive_statement*
+    "}"
+
+derive_statement ::=
+    identifier whitespace "=" whitespace expression
+
+---
+
+### 3.13.7 Synthesize Block
+
+synthesize_block ::=
+    "synthesize" whitespace
+    "{" whitespace
+    synth_statement*
+    "}"
+
+synth_statement ::=
+    function_call
+
+---
+
+### 3.13.8 Split Block
+
+split_block ::=
+    "split" whitespace "by" whitespace split_expr
+
+split_expr ::=
+    "building"
+  | "storey"
+  | "project"
+  | function_call
+
+---
+
+### 3.13.9 Export Block
+
+export_block ::=
+    "export" whitespace export_kind whitespace
+    "{" whitespace
+    export_param*
+    "}"
+
+export_kind ::= "tabular" | "graph"
+
+export_param ::=
+    identifier whitespace "=" whitespace literal
+
+---
+
+### 3.13.10 Expressions
+
+expression ::=
+    literal
+  | identifier
+  | function_call
+  | expression "[" integer "]"
+
+---
+
+### 3.13.11 Function Calls
+
+function_call ::=
+    qualified_name
+    "(" argument_list? ")"
+
+qualified_name ::=
+    identifier { "." identifier }
+
+argument_list ::=
+    expression { "," whitespace expression }
+
+---
+
+### 3.13.12 Type Annotations (Optional)
+
+Type annotations may appear in documentation and tooling,
+but are **not required syntactically** in OpenBIM-DL v0.1.
+
+When present, they follow this form:
+
+type_annotation ::=
+    ":" whitespace type_name
+
+type_name ::=
+    "Bool"
+  | "Int"
+  | "Float"
+  | "Text"
+  | "Guid"
+  | "Enum"
+  | "List" "[" type_name "]"
+  | "Vec" "[" integer "]"
+
+---
+
+### 3.13.13 Whitespace and Comments
+
+- Whitespace may appear between any tokens.
+- Comments start with `#` and extend to the end of the line.
+- Comments and whitespace are ignored by the parser.
+
+---
+
+### 3.13.14 Grammar Notes
+
+- Block order is enforced semantically, not syntactically.
+- Expressions are side-effect free.
+- Operators beyond indexing (`[]`) are intentionally excluded in v0.1.
+- All identifiers are case-sensitive.
+
+---
+
