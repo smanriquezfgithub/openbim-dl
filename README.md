@@ -27,3 +27,7 @@ not an executable implementation.
 - v0.1 Language specification (current)
 - v0.2 Reference runtime (CLI)
 - v0.3 Web execution (SaaS)
+
+- ## License
+This specification is licensed under the Apache License, Version 2.0.
+
