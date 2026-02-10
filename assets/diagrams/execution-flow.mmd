@@ -33,9 +33,10 @@ flowchart LR
 
   %% Context Annotations
   subgraph Contexts
-    C1[Node Context<br/>(per entity)]
-    C2[Edge Context<br/>(per relation)]
-    C3[Batch Context<br/>(global)]
+    direction TB
+    C1[Node Context (per entity)]
+    C2[Edge Context (per relation)]
+    C3[Batch Context (global)]
   end
 
   F -.-> C1
@@ -46,9 +47,10 @@ flowchart LR
 
   %% Output Types
   subgraph Outputs
-    O1[Tabular Dataset<br/>(CSV / Parquet / JSONL)]
-    O2[Graph Dataset<br/>(edge_list)]
-    O3[Text Corpus<br/>(Embeddings)]
+    direction TB
+    O1[Tabular Dataset (CSV / Parquet / JSONL)]
+    O2[Graph Dataset (edge_list)]
+    O3[Text Corpus (Embeddings)]
   end
 
   O --> O1
