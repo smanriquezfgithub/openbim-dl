@@ -1,1 +1,56 @@
+# ifc_graph_gnn.obimdl
+# OpenBIM Data Language (OpenBIM-DL) — Example: Graph dataset for GNN (raw)
+
+source {
+  format = "IFC"
+}
+
+# Node view: we work from nodes and derive both node features and edge list exports.
+view GraphNodes {
+  select node
+  where exists(guid())
+}
+
+derive {
+  # -------------------------
+  # Node features (for GNN)
+  # -------------------------
+  node_guid      = guid()
+  node_ifc_type  = ifc.type()
+  node_bbox      = geom.bbox()
+  node_degree    = degree()
+
+  # Container chain key (used for splitting)
+  container_key  = container_chain()
+
+  # -------------------------
+  # Edge endpoints (derived from navigation)
+  # NOTE: In v0.1 we cannot select edges directly, so we emit edge rows
+  # via node navigation and label them by relation kind explicitly.
+  # -------------------------
+
+  # Edges: CONNECTS_TO (topology)
+  connects_targets = connects_to()
+
+  # Edges: CONTAINED_IN (spatial containment, immediate)
+  contained_target = contained_in()
+}
+
+# No synthesize block: raw data for GNN.
+
+# Anti-leakage: keep all nodes/edges within the same container chain together
+# Using the v0.1 split function defined in Chapter 4:
+split by split.by_hash(container_key)
+
+# Export 1: edge list
+# In v0.1 export schema options are minimal; we define edge_list format and rely on runtime
+# to interpret the derived edge endpoints.
+export graph {
+  format = "edge_list"
+}
+
+# Export 2: node feature table
+export tabular {
+  format = "parquet"
+}
 
