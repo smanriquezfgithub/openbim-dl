@@ -37,6 +37,8 @@ flowchart LR
     C1[Node Context (per entity)]
     C2[Edge Context (per relation)]
     C3[Batch Context (global)]
+    C1 --- C2
+    C2 --- C3
   end
 
   F -.-> C1
@@ -51,6 +53,8 @@ flowchart LR
     O1[Tabular Dataset (CSV / Parquet / JSONL)]
     O2[Graph Dataset (edge_list)]
     O3[Text Corpus (Embeddings)]
+    O1 --- O2
+    O2 --- O3
   end
 
   O --> O1
