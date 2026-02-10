@@ -216,3 +216,80 @@ Vectors are immutable.
 A specialized alias for `Vec[6]`.
 
 Structure:
+[xmin, ymin, zmin, xmax, ymax, zmax]
+
+Bounding boxes are:
+- axis-aligned,
+- expressed in model or world coordinates,
+- approximate by design.
+
+---
+
+### 2.6 Reference Types
+
+#### 2.6.1 Node
+
+Represents an IFC entity in the semantic graph.
+
+A `Node`:
+- corresponds to exactly one IFC instance,
+- may have attributes, properties, geometry, and relationships.
+
+Nodes are opaque references; direct mutation is not allowed.
+
+#### 2.6.2 Edge
+
+Represents a relationship between two nodes.
+
+Edges:
+- are typed (relation kind),
+- may carry metadata,
+- are directional where applicable.
+
+Edges are primarily used in graph projections and relational analysis.
+
+---
+
+### 2.7 Type Coercion Rules
+
+OpenBIM-DL uses **explicit coercion only**.
+
+Allowed coercions:
+- `Any → Text` via `to_text`
+- `Any → Float` via `to_num`
+
+Forbidden:
+- implicit numeric conversion from `Text`,
+- implicit boolean casting,
+- silent enum coercion.
+
+If coercion fails, the result is `Null`.
+
+---
+
+### 2.8 Type Stability and Evaluation Context
+
+All expressions in OpenBIM-DL are evaluated in a **well-defined context**:
+- node context (default),
+- edge context (for graph projections),
+- batch context (for validation and aggregation).
+
+The result type of an expression must be:
+- deterministic,
+- independent of execution order,
+- stable across runs.
+
+---
+
+### 2.9 Summary
+
+The OpenBIM-DL type system prioritizes:
+- clarity over cleverness,
+- explicitness over convenience,
+- robustness over strictness.
+
+This design reflects the realities of IFC data and enables safe,
+reproducible, and auditable dataset generation.
+
+---
+
