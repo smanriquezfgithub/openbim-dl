@@ -1,1 +1,53 @@
-d
+# text_embeddings.obimdl
+# OpenBIM Data Language (OpenBIM-DL)
+# Example: Text corpus generation for semantic embeddings
+
+source {
+  format = "IFC"
+}
+
+view Elements {
+  select node
+  where ifc.is_a("IfcElement")
+}
+
+derive {
+  # -------------------------
+  # Identity
+  # -------------------------
+  element_guid = guid()
+  element_type = ifc.type()
+
+  # -------------------------
+  # Spatial context
+  # -------------------------
+  storey_node = contained_in()
+  storey_name = ifc.attr("Name")
+
+  # -------------------------
+  # Geometry (for reference / multimodal use)
+  # -------------------------
+  bbox = geom.bbox()
+
+  # -------------------------
+  # Material-related signal
+  # (Raw, tool-dependent, intentionally not inferred)
+  # -------------------------
+  material_list = pset.list()
+
+  # -------------------------
+  # Textual description
+  # Standardized natural language description
+  # -------------------------
+  description_text = text.describe()
+}
+
+synthesize {
+  # Add slight geometric noise to improve robustness
+  jitter_bbox(0.05)
+}
+
+export tabular {
+  format = "jsonl"
+}
+
