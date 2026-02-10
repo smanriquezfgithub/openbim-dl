@@ -1,1 +1,53 @@
+# qa_anomalies.obimdl
+# OpenBIM Data Language (OpenBIM-DL)
+# Example: QA signals for IFC anomaly detection (v0.1 compliant)
+
+source {
+  format = "IFC"
+}
+
+view Elements {
+  select node
+  where ifc.is_a("IfcElement")
+}
+
+derive {
+  # -------------------------
+  # Identity
+  # -------------------------
+  element_guid = guid()
+  element_type = ifc.type()
+
+  # -------------------------
+  # 1) Geometry existence
+  # -------------------------
+  has_geometry = geom.exists()
+
+  # -------------------------
+  # 2) Raw geometry descriptors
+  # (Used externally to detect suspicious sizes)
+  # -------------------------
+  bbox = geom.bbox()
+  bbox_dims = geom.dims()
+
+  # -------------------------
+  # 3) Property sets presence
+  # -------------------------
+  psets_present = pset.list()
+
+  # -------------------------
+  # 4) Containment
+  # -------------------------
+  container = contained_in()
+  is_orphan = is_null(container)
+
+  # -------------------------
+  # 5) Connectivity signal (often useful for QA)
+  # -------------------------
+  graph_degree = degree()
+}
+
+export tabular {
+  format = "parquet"
+}
 
