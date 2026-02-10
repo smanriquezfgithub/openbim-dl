@@ -1,0 +1,39 @@
+graph TD
+
+  %% Node declarations (entities)
+
+  Wall[IfcWall]
+  Slab[IfcSlab]
+  Space[IfcSpace]
+  Storey[IfcBuildingStorey]
+  Building[IfcBuilding]
+  WallType[IfcWallType]
+
+  %% Relationships (directed)
+
+  Wall -->|contained_in| Storey
+  Slab -->|contained_in| Storey
+  Space -->|contained_in| Storey
+
+  Storey -->|contained_in| Building
+
+  Wall -->|type_of| WallType
+
+  Wall -->|connects_to| Slab
+  Wall -->|connects_to| Space
+
+  %% Conceptual attributes (as notes)
+
+  Wall --- WallAttr
+  Slab --- SlabAttr
+  Space --- SpaceAttr
+  Storey --- StoreyAttr
+  Building --- BuildingAttr
+
+  %% Attribute nodes
+
+  WallAttr["GlobalId<br/>Name<br/>Psets<br/>Geometry"]
+  SlabAttr["GlobalId<br/>Name<br/>Psets<br/>Geometry"]
+  SpaceAttr["GlobalId<br/>Name<br/>Psets<br/>Geometry"]
+  StoreyAttr["GlobalId<br/>Name"]
+  BuildingAttr["GlobalId<br/>Name"]
