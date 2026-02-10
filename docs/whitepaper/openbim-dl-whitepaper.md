@@ -1,7 +1,7 @@
 # OpenBIM Data Language (OpenBIM-DL)
 ## A Declarative Language for Reproducible AI Dataset Generation from IFC Models
 
-### Whitepaper — Version 0.1
+### Whitepaper — Version 0.1 (Revised)
 
 ---
 
@@ -90,17 +90,17 @@ This section compares OpenBIM-DL with commonly used approaches, focusing on **ca
 Custom scripts directly traverse IFC data structures, extract values, and build datasets.
 
 **Strengths**
-- Maximum flexibility
-- Full access to IFC internals
+- Maximum flexibility  
+- Full access to IFC internals  
 - Mature tooling (e.g., IfcOpenShell)
 
 **Limitations**
-- Transformation logic is implicit and scattered
-- Reproducibility depends on code, environment, and libraries
-- Difficult to audit or standardize across teams
-- Dataset definition is inseparable from execution code
+- Transformation logic is implicit and scattered  
+- Reproducibility depends on code, environment, and libraries  
+- Difficult to audit or standardize across teams  
+- Dataset definition is inseparable from execution code  
 
-**Relation to OpenBIM-DL**
+**Relation to OpenBIM-DL**  
 OpenBIM-DL does **not replace scripting**.  
 Instead, it defines a *formal specification layer* that scripting-based runtimes may implement.
 
@@ -112,20 +112,20 @@ Instead, it defines a *formal specification layer* that scripting-based runtimes
 ETL tools move data from IFC into relational or analytical stores.
 
 **Strengths**
-- Well-established for structured data
-- Scalable execution engines
-- Clear separation of pipeline stages
+- Well-established for structured data  
+- Scalable execution engines  
+- Clear separation of pipeline stages  
 
 **Limitations**
-- IFC semantics must be flattened early
-- Graph relationships are often lost or denormalized
-- ETL tools lack native understanding of IFC constructs
-- Transformations are procedural, not semantic
+- IFC semantics must be flattened early  
+- Graph relationships are often lost or denormalized  
+- ETL tools lack native understanding of IFC constructs  
+- Transformations are procedural, not semantic  
 
-**Relation to OpenBIM-DL**
+**Relation to OpenBIM-DL**  
 OpenBIM-DL complements ETL by:
-- preserving graph semantics during transformation,
-- defining IFC-aware derivation rules,
+- preserving graph semantics during transformation,  
+- defining IFC-aware derivation rules,  
 - producing outputs consumable by ETL systems.
 
 ---
@@ -136,18 +136,18 @@ OpenBIM-DL complements ETL by:
 IFC is mapped to RDF/OWL and queried using SPARQL.
 
 **Strengths**
-- Formal semantics
-- Explicit graph structure
-- Strong reasoning capabilities
-- Interoperability with knowledge graphs
+- Formal semantics  
+- Explicit graph structure  
+- Strong reasoning capabilities  
+- Interoperability with knowledge graphs  
 
 **Limitations**
-- High complexity for practitioners
-- Performance overhead for large models
-- Not optimized for ML feature engineering
-- SPARQL queries are often verbose for numeric feature extraction
+- High complexity for practitioners  
+- Performance overhead for large models  
+- Not optimized for ML feature engineering  
+- SPARQL queries are often verbose for numeric feature extraction  
 
-**Relation to OpenBIM-DL**
+**Relation to OpenBIM-DL**  
 OpenBIM-DL is **not a semantic replacement for RDF**.  
 It is a **feature engineering language**, not an ontology language.
 
@@ -161,19 +161,19 @@ RDF excels at reasoning and integration; OpenBIM-DL focuses on reproducible data
 IFC data is transformed into relational schemas and queried using SQL.
 
 **Strengths**
-- Mature query language
-- Efficient aggregation
-- Broad ecosystem
+- Mature query language  
+- Efficient aggregation  
+- Broad ecosystem  
 
 **Limitations**
-- Graph relationships require complex joins
-- Schema design decisions bias downstream analysis
-- Geometry handling is non-native
-- IFC heterogeneity is difficult to model relationally
+- Graph relationships require complex joins  
+- Schema design decisions bias downstream analysis  
+- Geometry handling is non-native  
+- IFC heterogeneity is difficult to model relationally  
 
-**Relation to OpenBIM-DL**
+**Relation to OpenBIM-DL**  
 OpenBIM-DL operates **before** SQL:
-- it defines *what* data should exist,
+- it defines *what* data should exist,  
 - SQL operates on the resulting dataset.
 
 ---
@@ -183,12 +183,12 @@ OpenBIM-DL operates **before** SQL:
 ### 3.1 Declarative Specification
 
 OpenBIM-DL separates:
-- **dataset definition** (language),
+- **dataset definition** (language),  
 - **dataset execution** (runtime).
 
 This separation enables:
-- reproducibility,
-- auditability,
+- reproducibility,  
+- auditability,  
 - multiple compatible runtimes.
 
 ---
@@ -196,9 +196,9 @@ This separation enables:
 ### 3.2 Graph-First Model
 
 OpenBIM-DL treats IFC as:
-- a semantic graph,
-- with nodes (entities),
-- edges (relationships),
+- a semantic graph,  
+- with nodes (entities),  
+- edges (relationships),  
 - optional geometry.
 
 Graph navigation is explicit and first-class.
@@ -210,11 +210,45 @@ Graph navigation is explicit and first-class.
 Real IFC data is incomplete and inconsistent.
 
 OpenBIM-DL:
-- represents missing data explicitly as `Null`,
-- forbids implicit defaulting,
+- represents missing data explicitly as `Null`,  
+- forbids implicit defaulting,  
 - treats validation results as data.
 
 This enables AI models to learn from *data quality itself*.
+
+---
+
+### 3.4 Dataset Projections
+
+OpenBIM-DL does not define a single dataset format.  
+Instead, it defines **dataset projections**: deterministic transformations of an IFC graph into
+AI-oriented data representations.
+
+A dataset projection is defined by:
+- a **view** (selection of IFC entities),  
+- a **derive step** (feature extraction and transformation),  
+- an optional **synthesize step**,  
+- and a **target representation**.
+
+The primary dataset projections supported by OpenBIM-DL are:
+
+#### a) Tabular Projection
+- Rows represent IFC entities.  
+- Columns represent derived features.  
+- Suitable for classical machine learning, quality assurance, and analytics.
+
+#### b) Text Projection
+- Each entity is mapped to a controlled textual description.  
+- Text is treated as a **first-class feature**, not documentation.  
+- Suitable for embeddings, semantic search, and retrieval-augmented generation.
+
+#### c) Graph Projection
+- Nodes represent IFC entities.  
+- Edges represent explicit IFC relationships.  
+- Suitable for graph algorithms and graph neural network training.
+
+These projections are **complementary views of the same IFC source**, enabling multiple AI workflows
+to operate on a shared, reproducible semantic foundation.
 
 ---
 
@@ -223,13 +257,13 @@ This enables AI models to learn from *data quality itself*.
 ### 4.1 Tabular Machine Learning
 
 **Use cases**
-- classification of elements,
-- regression on quantities,
+- classification of elements,  
+- regression on quantities,  
 - anomaly detection.
 
 **OpenBIM-DL contribution**
-- deterministic feature derivation,
-- explicit missingness,
+- deterministic feature derivation,  
+- explicit missingness,  
 - reproducible preprocessing.
 
 Result: structured tables suitable for classical ML and deep learning.
@@ -239,13 +273,13 @@ Result: structured tables suitable for classical ML and deep learning.
 ### 4.2 Graph Neural Networks (GNN)
 
 **Use cases**
-- MEP system inference,
-- connectivity-based classification,
+- MEP system inference,  
+- connectivity-based classification,  
 - topological anomaly detection.
 
 **OpenBIM-DL contribution**
-- controlled graph projection,
-- explicit node and edge features,
+- controlled graph projection,  
+- explicit node and edge features,  
 - stable topology definitions.
 
 Result: consistent graph datasets without ad-hoc extraction code.
@@ -255,27 +289,28 @@ Result: consistent graph datasets without ad-hoc extraction code.
 ### 4.3 Text Embeddings and Semantic Search
 
 **Use cases**
-- semantic similarity,
-- retrieval-augmented generation,
+- semantic similarity,  
+- retrieval-augmented generation,  
 - model explainability.
 
 **OpenBIM-DL contribution**
-- standardized textual descriptions,
-- controlled feature-to-text mapping,
-- reproducible embedding inputs.
+- standardized textual descriptions derived from BIM semantics,  
+- controlled mapping from features to text,  
+- reproducible embedding inputs aligned with IFC identifiers.
 
-Result: text corpora aligned with BIM semantics.
+Result: text corpora that can be directly consumed by modern embedding models, enabling semantic
+search and AI agents grounded in BIM data.
 
 ---
 
 ## 5. Scope and Limitations
 
 OpenBIM-DL intentionally does **not** aim to:
-- replace IFC authoring tools,
-- replace IFCOWL or semantic reasoning,
+- replace IFC authoring tools,  
+- replace IFCOWL or semantic reasoning,  
 - define execution engines or storage systems.
 
-It focuses strictly on **dataset specification**.
+It focuses strictly on **dataset specification and projection**.
 
 ---
 
@@ -284,8 +319,8 @@ It focuses strictly on **dataset specification**.
 OpenBIM-DL addresses a critical gap between BIM interoperability standards and AI workflows.
 
 By formalizing dataset generation as a declarative language, it enables:
-- reproducible research,
-- auditable industrial pipelines,
+- reproducible research,  
+- auditable industrial pipelines,  
 - consistent integration of BIM semantics into AI systems.
 
 OpenBIM-DL does not compete with existing tools; it provides a missing specification layer
@@ -295,12 +330,9 @@ that allows them to interoperate more reliably.
 
 ## References
 
-- buildingSMART International. *Industry Foundation Classes (IFC)*.
-- Eastman et al. *BIM Handbook*.
-- ISO 16739.
-- ISO 19650.
-- W3C. *RDF and SPARQL Specifications*.
-- Kipf & Welling. *Graph Convolutional Networks*.
-
----
-
+- buildingSMART International. *Industry Foundation Classes (IFC)*.  
+- Eastman et al. *BIM Handbook*.  
+- ISO 16739.  
+- ISO 19650.  
+- W3C. *RDF and SPARQL Specifications*.  
+- Kipf & Welling. *Graph Convolutional Networks*.  
