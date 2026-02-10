@@ -1,0 +1,29 @@
+flowchart TB
+
+  %% Node declarations
+
+  A[IFC Semantic Graph]
+
+  B[Tabular Projection]
+  C[Graph Projection]
+  D[Text Projection]
+  E[3D Projection]
+
+  B1[DataFrame]
+  C1[Edge List]
+  D1[JSON Lines]
+  E1[Point Cloud]
+
+  %% Input description
+
+  A -->|Nodes with attributes| B
+  A -->|Edges with types| C
+  A -->|Node descriptions| D
+  A -->|Geometry| E
+
+  %% Output formats
+
+  B -->|Rows = nodes<br/>Columns = features| B1
+  C -->|source target edge_type| C1
+  D -->|guid description| D1
+  E -->|xyz label| E1
