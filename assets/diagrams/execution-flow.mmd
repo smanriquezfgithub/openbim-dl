@@ -1,8 +1,6 @@
 flowchart LR
 
-  %% -------------------------------------------------
   %% OpenBIM-DL Execution Flow
-  %% -------------------------------------------------
 
   A[IFC Model Input] --> B[source]
 
@@ -11,36 +9,33 @@ flowchart LR
   C --> D[view]
 
   %% VIEW
-  D -->|Select nodes / edges| E[Active View]
+  D -->|Select nodes or edges| E[Active View]
   E --> F[derive]
 
   %% DERIVE
-  F -->|Evaluate expressions per context| G[Derived Dataset]
+  F -->|Evaluate expressions| G[Derived Dataset]
 
   %% SYNTHESIZE (optional)
   G --> H{Synthesize defined?}
   H -->|Yes| I[synthesize]
-  I -->|Apply controlled perturbations| J[Synthesized Dataset]
+  I -->|Apply perturbations| J[Synthesized Dataset]
   H -->|No| J
 
   %% SPLIT (optional)
   J --> K{Split defined?}
   K -->|Yes| L[split]
-  L -->|Batch grouping / anti-leakage| M[Partitioned Dataset]
+  L -->|Batch grouping| M[Partitioned Dataset]
   K -->|No| M
 
   %% EXPORT
   M --> N[export]
   N --> O[Final Outputs]
 
-  %% -------------------------------------------------
   %% Context Annotations
-  %% -------------------------------------------------
-
   subgraph Contexts
-    C1[Node Context\n(per entity)]
-    C2[Edge Context\n(per relation)]
-    C3[Batch Context\n(global)]
+    C1[Node Context<br/>(per entity)]
+    C2[Edge Context<br/>(per relation)]
+    C3[Batch Context<br/>(global)]
   end
 
   F -.-> C1
@@ -49,14 +44,11 @@ flowchart LR
   L -.-> C3
   N -.-> C3
 
-  %% -------------------------------------------------
   %% Output Types
-  %% -------------------------------------------------
-
   subgraph Outputs
-    O1[Tabular Dataset\n(CSV / Parquet / JSONL)]
-    O2[Graph Dataset\n(edge_list)]
-    O3[Text Corpus\n(Embeddings)]
+    O1[Tabular Dataset<br/>(CSV / Parquet / JSONL)]
+    O2[Graph Dataset<br/>(edge_list)]
+    O3[Text Corpus<br/>(Embeddings)]
   end
 
   O --> O1
