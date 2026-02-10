@@ -1,45 +1,54 @@
 flowchart LR
 
-  %% OpenBIM-DL Execution Flow
+  %% Node declarations (REQUIRED by GitHub Mermaid)
 
-  A[IFC Model Input] --> B[source]
+  A[IFC Model Input]
+  B[source]
+  C[Semantic Graph]
+  D[view]
+  E[Active View]
+  F[derive]
+  G[Derived Dataset]
+  H{Synthesize defined?}
+  I[synthesize]
+  J[Synthesized Dataset]
+  K{Split defined?}
+  L[split]
+  M[Partitioned Dataset]
+  N[export]
+  O[Final Outputs]
 
-  %% SOURCE
-  B -->|Initialize model context| C[Semantic Graph]
-  C --> D[view]
+  C1[Node Context]
+  C2[Edge Context]
+  C3[Batch Context]
 
-  %% VIEW
-  D -->|Select nodes or edges| E[Active View]
-  E --> F[derive]
+  O1[Tabular Dataset]
+  O2[Graph Dataset]
+  O3[Text Corpus]
 
-  %% DERIVE
-  F -->|Evaluate expressions| G[Derived Dataset]
+  %% Main execution flow
 
-  %% SYNTHESIZE (optional)
-  G --> H{Synthesize defined?}
-  H -->|Yes| I[synthesize]
-  I -->|Apply perturbations| J[Synthesized Dataset]
+  A --> B
+  B --> C
+  C --> D
+  D --> E
+  E --> F
+  F --> G
+
+  G --> H
+  H -->|Yes| I
+  I --> J
   H -->|No| J
 
-  %% SPLIT (optional)
-  J --> K{Split defined?}
-  K -->|Yes| L[split]
-  L -->|Batch grouping| M[Partitioned Dataset]
+  J --> K
+  K -->|Yes| L
+  L --> M
   K -->|No| M
 
-  %% EXPORT
-  M --> N[export]
-  N --> O[Final Outputs]
+  M --> N
+  N --> O
 
-  %% Context Annotations
-  subgraph Contexts
-    direction TB
-    C1[Node Context (per entity)]
-    C2[Edge Context (per relation)]
-    C3[Batch Context (global)]
-    C1 --- C2
-    C2 --- C3
-  end
+  %% Context links
 
   F -.-> C1
   D -.-> C1
@@ -47,14 +56,20 @@ flowchart LR
   L -.-> C3
   N -.-> C3
 
-  %% Output Types
+  %% Subgraphs (ONLY grouping, no definitions)
+
+  subgraph Contexts
+    direction TB
+    C1
+    C2
+    C3
+  end
+
   subgraph Outputs
     direction TB
-    O1[Tabular Dataset (CSV / Parquet / JSONL)]
-    O2[Graph Dataset (edge_list)]
-    O3[Text Corpus (Embeddings)]
-    O1 --- O2
-    O2 --- O3
+    O1
+    O2
+    O3
   end
 
   O --> O1
